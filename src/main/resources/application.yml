@@ -1,15 +1,22 @@
+#spring:
+#  datasource:
+#    url: jdbc:mysql://localhost:3306
+#    username: root
+#    password:
+#    initialization-mode: always
+#  mvc:
+#    hiddenmethod:
+#      filter:
+#        enabled: true
+#  sql:
+#    init:
+#      mode: always
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306
+#    url: none
+    url: jdbc:mysql://127.0.0.1:3306/db?characterEncoding=utf8
     username: root
-    password:
-    initialization-mode: always
-  mvc:
-    hiddenmethod:
-      filter:
-        enabled: true
-  sql:
-    init:
-      mode: always
+    password: mysql
+    driverClassName: com.mysql.jdbc.Driver
 cors:
   originPatterns: http://localhost:3000/

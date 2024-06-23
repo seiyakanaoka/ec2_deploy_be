@@ -1,7 +1,7 @@
 package com.example.project.exception.handler
 
-import com.example.project.error.ApplicationError
-import com.example.project.error.FieldError
+import com.example.project.common.error.ApplicationErrorResponse
+import com.example.project.common.error.FieldError
 import com.example.project.exception.TitleExistException
 import com.example.project.exception.UserNotExistsException
 import jakarta.servlet.http.HttpServletRequest
@@ -32,16 +32,16 @@ class ExceptionHandler {
     fun titleExistException(
         request: HttpServletRequest,
         ex: TitleExistException
-    ): ResponseEntity<ApplicationError> {
+    ): ResponseEntity<ApplicationErrorResponse> {
         log.error(ex)
 
         val fieldError: FieldError = FieldError("title", "タイトルは既に存在します")
 
         val fieldErrors = listOf<FieldError>(fieldError)
 
-        val error = ApplicationError("入力エラー発生", HttpStatus.BAD_REQUEST.value(), request.method, fieldErrors);
+        val error = ApplicationErrorResponse("入力エラー発生", HttpStatus.BAD_REQUEST.value(), request.method, fieldErrors);
 
-        return ResponseEntity<ApplicationError>(error, HttpStatus.BAD_REQUEST);
+        return ResponseEntity<ApplicationErrorResponse>(error, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -54,12 +54,12 @@ class ExceptionHandler {
     fun userNotExistException(
         request: HttpServletRequest,
         ex: TitleExistException
-    ): ResponseEntity<ApplicationError> {
+    ): ResponseEntity<ApplicationErrorResponse> {
         log.error(ex)
 
-        val error = ex.message?.let { ApplicationError(it, HttpStatus.BAD_REQUEST.value(), request.method) };
+        val error = ex.message?.let { ApplicationErrorResponse(it, HttpStatus.BAD_REQUEST.value(), request.method) };
 
-        return ResponseEntity<ApplicationError>(error, HttpStatus.BAD_REQUEST);
+        return ResponseEntity<ApplicationErrorResponse>(error, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -73,15 +73,15 @@ class ExceptionHandler {
     fun constraintViolationException(
         request: HttpServletRequest,
         ex: ConstraintViolationException
-    ): ResponseEntity<ApplicationError> {
+    ): ResponseEntity<ApplicationErrorResponse> {
         log.error(ex)
 
         val fieldErrors =
             ex.constraintViolations.map { it -> FieldError(it.propertyPath.toString(), it.message) }
 
-        val error = ApplicationError("入力エラー発生", HttpStatus.BAD_REQUEST.value(), request.method, fieldErrors);
+        val error = ApplicationErrorResponse("入力エラー発生", HttpStatus.BAD_REQUEST.value(), request.method, fieldErrors);
 
-        return ResponseEntity<ApplicationError>(error, HttpStatus.BAD_REQUEST);
+        return ResponseEntity<ApplicationErrorResponse>(error, HttpStatus.BAD_REQUEST);
     }
 
 
@@ -96,15 +96,15 @@ class ExceptionHandler {
     fun methodArgumentNotValidException(
         request: HttpServletRequest,
         ex: MethodArgumentNotValidException
-    ): ResponseEntity<ApplicationError> {
+    ): ResponseEntity<ApplicationErrorResponse> {
         log.error(ex)
 
         val fieldErrors =
             ex.fieldErrors.map { it -> it.defaultMessage?.let { it1 -> FieldError(it.field, it1) } }
 
-        val error = ApplicationError("入力エラー発生", HttpStatus.BAD_REQUEST.value(), request.method, fieldErrors);
+        val error = ApplicationErrorResponse("入力エラー発生", HttpStatus.BAD_REQUEST.value(), request.method, fieldErrors);
 
-        return ResponseEntity<ApplicationError>(error, HttpStatus.BAD_REQUEST);
+        return ResponseEntity<ApplicationErrorResponse>(error, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -118,12 +118,12 @@ class ExceptionHandler {
     fun unauthorizedException(
         request: HttpServletRequest,
         ex: Unauthorized
-    ): ResponseEntity<ApplicationError> {
+    ): ResponseEntity<ApplicationErrorResponse> {
         log.error(ex)
 
-        val error = ex.message?.let { ApplicationError(it, HttpStatus.BAD_REQUEST.value(), request.method) };
+        val error = ex.message?.let { ApplicationErrorResponse(it, HttpStatus.BAD_REQUEST.value(), request.method) };
 
-        return ResponseEntity<ApplicationError>(error, HttpStatus.UNAUTHORIZED);
+        return ResponseEntity<ApplicationErrorResponse>(error, HttpStatus.UNAUTHORIZED);
     }
 
     /**
@@ -136,14 +136,14 @@ class ExceptionHandler {
     fun notSupportedException(
         request: HttpServletRequest,
         ex: HttpRequestMethodNotSupportedException
-    ): ResponseEntity<ApplicationError> {
+    ): ResponseEntity<ApplicationErrorResponse> {
         log.error(ex.message)
 
         val status: HttpStatus = getStatus(request)
 
-        val error = ApplicationError("リクエスト方法が間違っています", status.value(), request.method);
+        val error = ApplicationErrorResponse("リクエスト方法が間違っています", status.value(), request.method);
 
-        return ResponseEntity<ApplicationError>(error, status);
+        return ResponseEntity<ApplicationErrorResponse>(error, status);
     }
 
     /**
@@ -156,12 +156,12 @@ class ExceptionHandler {
     fun noSuchElementException(
         request: HttpServletRequest,
         ex: NoSuchElementException
-    ): ResponseEntity<ApplicationError> {
+    ): ResponseEntity<ApplicationErrorResponse> {
         log.error(ex.message)
 
-        val error = ApplicationError("リクエストされた要素が見つかりません", HttpStatus.BAD_REQUEST.value(), request.method);
+        val error = ApplicationErrorResponse("リクエストされた要素が見つかりません", HttpStatus.BAD_REQUEST.value(), request.method);
 
-        return ResponseEntity<ApplicationError>(error, HttpStatus.BAD_REQUEST);
+        return ResponseEntity<ApplicationErrorResponse>(error, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -174,14 +174,14 @@ class ExceptionHandler {
     fun numberFormatException(
         request: HttpServletRequest,
         ex: NumberFormatException
-    ): ResponseEntity<ApplicationError> {
+    ): ResponseEntity<ApplicationErrorResponse> {
         log.error(ex.message)
 
         val status: HttpStatus = getStatus(request)
 
-        val error = ApplicationError("数値に変換できない文字列です", status.value(), request.method);
+        val error = ApplicationErrorResponse("数値に変換できない文字列です", status.value(), request.method);
 
-        return ResponseEntity<ApplicationError>(error, status);
+        return ResponseEntity<ApplicationErrorResponse>(error, status);
     }
 
     /**
@@ -194,14 +194,14 @@ class ExceptionHandler {
     fun dataIntegrityViolationException(
         request: HttpServletRequest,
         ex: DataIntegrityViolationException
-    ): ResponseEntity<ApplicationError> {
+    ): ResponseEntity<ApplicationErrorResponse> {
         log.error(ex.message)
 
         val status: HttpStatus = getStatus(request)
 
-        val error = ApplicationError("入力エラー発生", status.value(), request.method);
+        val error = ApplicationErrorResponse("入力エラー発生", status.value(), request.method);
 
-        return ResponseEntity<ApplicationError>(error, status);
+        return ResponseEntity<ApplicationErrorResponse>(error, status);
     }
 
     /**
@@ -214,14 +214,14 @@ class ExceptionHandler {
     fun nullPointerException(
         request: HttpServletRequest,
         ex: NullPointerException
-    ): ResponseEntity<ApplicationError> {
+    ): ResponseEntity<ApplicationErrorResponse> {
         log.error(ex.message)
 
         val status: HttpStatus = getStatus(request)
 
-        val error = ApplicationError("値がnullです", status.value(), request.method);
+        val error = ApplicationErrorResponse("値がnullです", status.value(), request.method);
 
-        return ResponseEntity<ApplicationError>(error, status);
+        return ResponseEntity<ApplicationErrorResponse>(error, status);
     }
 
     private fun getStatus(request: HttpServletRequest): HttpStatus {

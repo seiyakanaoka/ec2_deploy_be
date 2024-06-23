@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   id("org.springframework.boot") version "3.0.3"
   id("io.spring.dependency-management") version "1.1.0"
+  id("org.flywaydb.flyway") version "8.2.0"
   kotlin("jvm") version "1.7.22"
   kotlin("plugin.spring") version "1.7.22"
   kotlin("plugin.jpa") version "1.7.22"
@@ -30,6 +31,8 @@ dependencies {
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+  implementation("mysql:mysql-connector-java:8.0.23")
+  implementation("org.flywaydb:flyway-core")
   compileOnly("org.projectlombok:lombok")
   developmentOnly("org.springframework.boot:spring-boot-devtools")
   runtimeOnly("com.mysql:mysql-connector-j")
@@ -46,4 +49,11 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
   useJUnitPlatform()
+}
+
+// flywayがmysqlに接続する際の接続情報
+flyway {
+  url = "jdbc:mysql://127.0.0.1:3306/db"
+  user = "root"
+  password = "mysql"
 }
