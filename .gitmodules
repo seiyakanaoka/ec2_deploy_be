@@ -1,0 +1,4 @@
+[submodule "ci-cd-swagger"]
+	path = ci-cd-swagger
+	url = https://github.com/seiyakanaoka/ci-cd-swagger.git
+	branch = swagger
