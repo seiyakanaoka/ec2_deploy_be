@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
   id 'org.springframework.boot' version '3.2.0'
@@ -38,6 +39,7 @@ dependencies {
   implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
   implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
   implementation 'org.jetbrains.kotlin:kotlin-reflect'
+  implementation "org.springdoc:springdoc-openapi-ui:1.5.5"
   developmentOnly 'org.springframework.boot:spring-boot-devtools'
   runtimeOnly 'com.mysql:mysql-connector-j'
   testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -65,3 +67,47 @@ flyway {
   user = "root"
   password = "mysql"
 }
+
+openApiGenerate {
+  generatorName = "kotlin-spring"
+  inputSpec = "${rootDir}/ci-cd-swagger/openapi.yaml"
+  outputDir = "${rootDir}/src/main/kotlin/com/example/project/common/openapi"
+  modelPackage = "openapi.model"
+  apiPackage = "openapi.api"
+  templateDir = "${rootDir}/ci-cd-swagger/templates"
+  configOptions = [
+          generateSchema: "false",
+  ]
+  additionalProperties = [
+          interfaceOnly : true,
+          skipDefaultInterface: true,
+  ]
+}
+
+tasks.named('openApiGenerate') {
+  doLast {
+    // readme.md ファイルのパスを指定
+    def filesToDelete = [
+            "${rootDir}/src/main/kotlin/com/example/project/common/openapi/README.md",
+            "${rootDir}/src/main/kotlin/com/example/project/common/openapi/pom.xml",
+            "${rootDir}/src/main/kotlin/com/example/project/common/openapi/build.gradle.kts",
+            "${rootDir}/src/main/kotlin/com/example/project/common/openapi/settings.gradle",
+            "${rootDir}/src/main/kotlin/com/example/project/common/openapi/settings.gradle",
+            "${rootDir}/src/main/kotlin/com/example/project/common/openapi/src/main/kotlin/openapi/api/ApiUtil.kt",
+            "${rootDir}/src/main/kotlin/com/example/project/common/openapi/src/main/kotlin/openapi/api/Exceptions.kt",
+    ]
+
+    // 各ファイルを削除
+    filesToDelete.each { filePath ->
+      def file = file(filePath)
+      if (file.exists()) {
+        file.delete()
+        println "${filePath} deleted"
+      } else {
+        println "${filePath} not found"
+      }
+    }
+  }
+}
+
+compileJava.dependsOn tasks.openApiGenerate
